@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech with Anuj | AI Learning Series – 50 Question Bank</title>
+<style>
+:root{
+  --primary:#5b4bdb; --primary2:#7c3aed; --bg:#f6f7fb; --card:#fff;
+  --text:#1f2937; --muted:#6b7280; --green:#16a34a; --red:#dc2626;
+  --border:#e5e7eb; --shadow:0 10px 30px rgba(31,41,55,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+header{background:linear-gradient(135deg,#4338ca,#7c3aed);color:#fff;padding:28px 16px 34px;text-align:center}
+header h1{margin:0;font-size:clamp(25px,5vw,40px)}
+header p{margin:7px 0 0;opacity:.92;font-size:16px}
+.container{max-width:1050px;margin:-18px auto 40px;padding:0 14px}
+.toolbar{background:var(--card);border-radius:18px;padding:14px;box-shadow:var(--shadow);display:grid;gap:10px}
+.search{display:flex;gap:8px}
+input[type=search]{width:100%;border:1px solid var(--border);border-radius:12px;padding:13px 14px;font-size:15px;outline:none}
+input[type=search]:focus{border-color:var(--primary)}
+.filters{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
+.filter{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 13px;white-space:nowrap;cursor:pointer}
+.filter.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.stats{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px}
+.progress-wrap{flex:1;min-width:220px}
+.progress{height:9px;background:#ececf5;border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22c55e,#16a34a);transition:.3s}
+.stats small{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:9px 13px;cursor:pointer;font-weight:600;background:#eef2ff;color:#4338ca}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.danger{background:#fee2e2;color:#991b1b}
+.section-title{margin:28px 3px 12px;font-size:18px;color:#374151}
+.question{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;box-shadow:0 5px 18px rgba(31,41,55,.04)}
+.qhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.badge{font-size:12px;background:#ede9fe;color:#5b21b6;padding:5px 9px;border-radius:999px;white-space:nowrap}
+.qnum{font-weight:800;color:var(--primary)}
+.question h3{margin:8px 0 14px;font-size:18px;line-height:1.55}
+.options{display:grid;gap:8px}
+.option{border:1px solid var(--border);background:#fafafa;border-radius:12px;padding:11px 13px;cursor:pointer;transition:.2s;text-align:left;width:100%;font-size:15px}
+.option:hover{border-color:#a5b4fc;background:#f5f3ff}
+.option.selected{border-color:#818cf8;background:#eef2ff}
+.option.correct{border-color:#86efac;background:#f0fdf4;color:#166534}
+.option.wrong{border-color:#fecaca;background:#fef2f2;color:#991b1b}
+.answer{display:none;margin-top:12px;border-radius:12px;padding:12px 14px;background:#f8fafc;border-left:4px solid var(--green)}
+.answer.show{display:block}
+.answer strong{color:#166534}
+.explain{margin-top:5px;color:#4b5563;font-size:14px}
+.empty{padding:35px;text-align:center;color:var(--muted);background:#fff;border-radius:16px}
+.quiz-panel{display:none;background:#fff;border-radius:18px;padding:20px;box-shadow:var(--shadow);margin-top:20px}
+.quiz-panel.active{display:block}
+.quiz-q{font-size:21px;font-weight:700;margin:12px 0}
+.quiz-options{display:grid;gap:9px}
+.quiz-result{text-align:center;padding:18px;background:#f8fafc;border-radius:14px;margin-top:15px}
+footer{text-align:center;color:#6b7280;padding:25px 10px;font-size:13px}
+@media(max-width:600px){.question{padding:16px}.qhead{flex-direction:column}.stats{align-items:stretch}.actions{width:100%}.actions .btn{flex:1}}
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:14px;letter-spacing:.5px;opacity:.9">TECH WITH ANUJ</div>
+  <h1>🤖 AI Learning Series</h1>
+  <p>50 प्रश्नों का Interactive Question Bank</p>
+</header>
+
+<main class="container">
+  <div class="toolbar">
+    <div class="search">
+      <input id="search" type="search" placeholder="🔎 प्रश्न, topic या keyword खोजें...">
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="stats">
+      <div class="progress-wrap">
+        <small id="progressText">0 / 50 प्रश्न देखे गए</small>
+        <div class="progress"><i id="progressBar"></i></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" onclick="startQuiz()">🎯 Quick Quiz</button>
+        <button class="btn" onclick="showAll()">👁️ सभी उत्तर</button>
+        <button class="btn danger" onclick="resetBank()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="quizPanel" class="quiz-panel"></div>
+  <div class="section-title" id="countTitle">50 प्रश्न</div>
+  <div id="questions"></div>
+</main>
+
+<footer>
+  <b>Tech with Anuj</b> • AI Learning Series<br>
+  Learn • Practice • Think • Verify
+</footer>
+
+<script>
+const questions = [
+{cat:"Artificial Intelligence – मूल अवधारणाएँ",q:"AI का पूरा नाम क्या है?",o:["Automated Intelligence","Artificial Intelligence","Advanced Information","Artificial Information"],a:1,e:"AI का अर्थ Artificial Intelligence अर्थात कृत्रिम बुद्धिमत्ता है।"},
+{cat:"Artificial Intelligence – मूल अवधारणाएँ",q:"Artificial Intelligence का मुख्य उद्देश्य क्या है?",o:["केवल इंटरनेट की गति बढ़ाना","मशीनों को मानव जैसी बुद्धिमान कार्यक्षमता प्रदान करना","कंप्यूटर का आकार छोटा करना","केवल वीडियो बनाना"],a:1,e:"AI ऐसी प्रणालियाँ विकसित करने से संबंधित है जो सीखने, समझने, निर्णय लेने और समस्या समाधान जैसे कार्य कर सकें।"},
+{cat:"Artificial Intelligence – मूल अवधारणाएँ",q:"Machine Learning किसका एक महत्वपूर्ण भाग है?",o:["Artificial Intelligence","Web Browser","Operating System","Computer Hardware"],a:0,e:"Machine Learning AI की एक प्रमुख शाखा है जिसमें सिस्टम डेटा से patterns सीखते हैं।"},
+{cat:"Artificial Intelligence – मूल अवधारणाएँ",q:"Generative AI मुख्य रूप से क्या कर सकता है?",o:["केवल डेटा delete करना","नया text, image, audio या video तैयार करना","केवल इंटरनेट चलाना","केवल calculator की तरह काम करना"],a:1,e:"Generative AI उपलब्ध patterns के आधार पर नया content generate कर सकता है।"},
+{cat:"Artificial Intelligence – मूल अवधारणाएँ",q:"AI के संदर्भ में Prompt क्या होता है?",o:["कंप्यूटर का hardware","AI को दिया गया instruction या input","Internet connection","Antivirus"],a:1,e:"Prompt वह निर्देश या input है जिसके आधार पर AI response तैयार करता है।"},
+
+{cat:"ChatGPT और AI Chatbots",q:"ChatGPT का उपयोग किस प्रकार के कार्य के लिए किया जा सकता है?",o:["केवल गणना","केवल फोटो editing","लेखन, brainstorming, learning और information processing","केवल gaming"],a:2,e:"ChatGPT का उपयोग अनेक language-based और reasoning-oriented tasks में किया जा सकता है।"},
+{cat:"ChatGPT और AI Chatbots",q:"ChatGPT से बेहतर परिणाम प्राप्त करने के लिए prompt में क्या देना उपयोगी है?",o:["केवल एक शब्द","स्पष्ट उद्देश्य और आवश्यक context","केवल emoji","केवल प्रश्नचिह्न"],a:1,e:"स्पष्ट context, उद्देश्य और अपेक्षित output format AI को अधिक उपयोगी उत्तर देने में मदद करते हैं।"},
+{cat:"ChatGPT और AI Chatbots",q:"यदि AI से किसी विषय पर शिक्षक के लिए lesson plan बनवाना हो तो सबसे उपयोगी क्या होगा?",o:["केवल “Lesson plan” लिखना","कक्षा, विषय, समय और learning objectives बताना","केवल “Create” लिखना","केवल विषय का नाम देना"],a:1,e:"अधिक relevant context देने से AI अधिक specific और उपयोगी output तैयार कर सकता है।"},
+{cat:"ChatGPT और AI Chatbots",q:"AI द्वारा दिए गए उत्तर को महत्वपूर्ण कार्यों में इस्तेमाल करने से पहले क्या करना चाहिए?",o:["बिना पढ़े forward करना","तथ्य verify करना","केवल spelling देखना","उसे हमेशा सही मानना"],a:1,e:"AI कभी-कभी गलत या अपूर्ण जानकारी दे सकता है, इसलिए महत्वपूर्ण जानकारी को verify करना आवश्यक है।"},
+{cat:"ChatGPT और AI Chatbots",q:"AI hallucination का अर्थ क्या है?",o:["AI का बंद हो जाना","AI द्वारा गलत या काल्पनिक जानकारी को आत्मविश्वास से प्रस्तुत करना","Computer virus","Internet की समस्या"],a:1,e:"AI hallucination में मॉडल ऐसा उत्तर दे सकता है जो सुनने में सही लगे लेकिन तथ्यात्मक रूप से गलत हो।"},
+
+{cat:"Google Gemini",q:"Google Gemini क्या है?",o:["केवल search engine","Google का AI-based assistant/model family","केवल photo editor","Operating System"],a:1,e:"Gemini Google की generative AI technology और AI assistant ecosystem का हिस्सा है।"},
+{cat:"Google Gemini",q:"Gemini जैसे AI tools का उपयोग किस कार्य में किया जा सकता है?",o:["Content creation","Ideas generate करना","जानकारी को समझना और summarize करना","उपरोक्त सभी"],a:3,e:"Generative AI tools कई प्रकार के learning और productivity tasks में सहायता कर सकते हैं।"},
+{cat:"Google Gemini",q:"ChatGPT और Gemini जैसे tools के उपयोग में सबसे महत्वपूर्ण skill कौन-सी है?",o:["केवल typing speed","Effective prompting और critical thinking","केवल mobile photography","केवल gaming skill"],a:1,e:"AI से अच्छा output प्राप्त करने के साथ उसके output का मूल्यांकन करना भी महत्वपूर्ण है।"},
+{cat:"Google Gemini",q:"AI से किसी document का सारांश बनवाते समय क्या देना चाहिए?",o:["केवल “Summarize”","document/content और अपेक्षित summary का उद्देश्य","केवल नाम","केवल emoji"],a:1,e:"Source content और अपेक्षित summary का context देने से output अधिक उपयोगी होता है।"},
+{cat:"Google Gemini",q:"AI tool चुनते समय सबसे पहले किस बात पर ध्यान देना चाहिए?",o:["केवल उसका logo","अपने task और tool की capabilities","केवल उसका रंग","केवल social media popularity"],a:1,e:"सही tool का चयन task की आवश्यकता और tool की capabilities के आधार पर होना चाहिए।"},
+
+{cat:"Prompt Engineering",q:"अच्छे prompt की सबसे महत्वपूर्ण विशेषता क्या है?",o:["अस्पष्टता","स्पष्टता","बहुत सारे emoji","केवल एक शब्द"],a:1,e:"Clear और specific prompt AI को अपेक्षित परिणाम समझने में मदद करता है।"},
+{cat:"Prompt Engineering",q:"“Act as a teacher and create a Class 5 lesson plan…” किस प्रकार के prompt का उदाहरण है?",o:["Context/role-based prompt","Hardware command","Search engine query","Password"],a:0,e:"इसमें AI को एक specific role और task दिया गया है।"},
+{cat:"Prompt Engineering",q:"Prompt में “Output को table में दो” लिखने से क्या लाभ है?",o:["AI बंद हो जाएगा","Output का format स्पष्ट हो जाता है","Internet तेज हो जाएगा","AI की memory बढ़ जाएगी"],a:1,e:"Output format बताने से response को अपेक्षित structure में प्राप्त करने में सहायता मिलती है।"},
+{cat:"Prompt Engineering",q:"यदि पहला AI response संतोषजनक न हो तो क्या किया जा सकता है?",o:["AI का उपयोग हमेशा के लिए बंद कर देना","Prompt को refine करके दोबारा निर्देश देना","Computer बंद करना","केवल नया account बनाना"],a:1,e:"Prompting एक iterative process है; feedback और additional context देकर output सुधारा जा सकता है।"},
+{cat:"Prompt Engineering",q:"Prompt में audience बताना क्यों उपयोगी है?",o:["AI की भाषा और complexity को audience के अनुसार ढालने में मदद मिलती है","Internet speed बढ़ती है","File size कम होती है","Computer की RAM बढ़ती है"],a:0,e:"जैसे “कक्षा 5 के बच्चों के लिए” बताने पर AI उसी स्तर की भाषा और उदाहरणों का उपयोग कर सकता है।"},
+
+{cat:"AI Image Generation",q:"AI Image Generation का अर्थ क्या है?",o:["केवल camera से photo लेना","AI की सहायता से नई images तैयार करना","Printer से photo निकालना","केवल photo crop करना"],a:1,e:"Generative AI textual या अन्य instructions के आधार पर images बना सकता है।"},
+{cat:"AI Image Generation",q:"Image generation prompt में कौन-सी जानकारी उपयोगी हो सकती है?",o:["Subject","Style","Background","उपरोक्त सभी"],a:3,e:"Subject, style, composition, background और अन्य visual details image generation में उपयोगी होते हैं।"},
+{cat:"AI Image Generation",q:"यदि किसी poster में text बिल्कुल सही चाहिए तो क्या ध्यान रखना चाहिए?",o:["AI-generated text को हमेशा बिना जाँचे इस्तेमाल करें","Generated image में text को ध्यान से verify करें","Text की आवश्यकता ही नहीं","केवल background बदलें"],a:1,e:"Image generation models में text rendering में त्रुटियाँ हो सकती हैं।"},
+{cat:"AI Image Generation",q:"Image prompt में “4:3 poster” जैसी जानकारी किससे संबंधित है?",o:["Aspect ratio","Audio quality","Password","Font size"],a:0,e:"4:3 image के width और height के अनुपात को दर्शाता है।"},
+{cat:"AI Image Generation",q:"किसी educational poster के लिए AI image बनाते समय सबसे महत्वपूर्ण क्या है?",o:["केवल सुंदरता","उद्देश्य, audience और visual clarity","केवल animation","केवल रंगों की संख्या"],a:1,e:"Educational visual का उद्देश्य और target audience design decisions को प्रभावित करते हैं।"},
+
+{cat:"AI Video Generation",q:"AI video बनाने से पहले images तैयार करने का क्या लाभ हो सकता है?",o:["Visual planning बेहतर हो सकती है","Internet बंद हो जाता है","Audio अपने आप रिकॉर्ड हो जाता है","Video हमेशा 4K हो जाती है"],a:0,e:"पहले visual assets तैयार करने से video की scenes और overall visual consistency plan करना आसान हो सकता है।"},
+{cat:"AI Video Generation",q:"AI video generation में image-to-video का अर्थ क्या है?",o:["Text को PDF बनाना","Static image को animated/video sequence में बदलना","Video को image में बदलना","Audio को text में बदलना"],a:1,e:"Image-to-video systems किसी image को आधार बनाकर motion या video sequence generate कर सकते हैं।"},
+{cat:"AI Video Generation",q:"AI video बनाने में storyboard का क्या महत्व है?",o:["Scenes को पहले से व्यवस्थित करने में मदद करता है","Computer की speed बढ़ाता है","Password सुरक्षित करता है","केवल audio हटाता है"],a:0,e:"Storyboard video की sequence और visual storytelling को plan करने में मदद करता है।"},
+{cat:"AI Video Generation",q:"AI-generated video में consistency का अर्थ क्या है?",o:["हर scene में characters और visual elements का अपेक्षाकृत consistent रहना","केवल video की लंबाई","केवल file size","केवल background music"],a:0,e:"Character appearance, style और scene continuity की consistency video quality के लिए महत्वपूर्ण है।"},
+{cat:"AI Video Generation",q:"AI video generation में prompt में motion बताने का क्या लाभ है?",o:["Desired movement को स्पष्ट किया जा सकता है","File automatically delete होती है","Resolution हमेशा double हो जाती है","Internet speed बढ़ती है"],a:0,e:"Motion instructions AI को scene में अपेक्षित movement समझने में मदद करती हैं।"},
+
+{cat:"AI और Education",q:"शिक्षक AI का उपयोग किस कार्य में कर सकते हैं?",o:["Lesson planning","Worksheet generation","Activity ideas","उपरोक्त सभी"],a:3,e:"AI शिक्षक के कई planning और content creation tasks में सहायता कर सकता है।"},
+{cat:"AI और Education",q:"AI द्वारा बनाई गई worksheet को सीधे विद्यार्थियों को देने से पहले क्या करना चाहिए?",o:["Review और fact-check","बिना पढ़े print","केवल font बदलना","केवल रंग बदलना"],a:0,e:"Content की accuracy, age appropriateness और learning objectives की जाँच आवश्यक है।"},
+{cat:"AI और Education",q:"AI शिक्षक की भूमिका को कैसे प्रभावित कर सकता है?",o:["शिक्षक की professional judgment की आवश्यकता समाप्त कर देता है","शिक्षक को planning और content creation में सहायता दे सकता है","शिक्षक की जगह हमेशा ले लेता है","केवल attendance लेता है"],a:1,e:"AI एक support tool हो सकता है; pedagogical decisions और professional judgment अभी भी महत्वपूर्ण हैं।"},
+{cat:"AI और Education",q:"Differentiated learning में AI का उपयोग कैसे किया जा सकता है?",o:["अलग-अलग learning levels के अनुसार activities तैयार करने में","सभी बच्चों को बिल्कुल समान सामग्री देने में","केवल attendance के लिए","केवल परीक्षा लेने में"],a:0,e:"AI विभिन्न learning needs के अनुसार content और activities के विकल्प तैयार करने में मदद कर सकता है।"},
+{cat:"AI और Education",q:"विद्यार्थियों को AI का उपयोग सिखाते समय सबसे महत्वपूर्ण बातों में से एक क्या है?",o:["हर AI output को सही मानना","Critical thinking और verification सिखाना","केवल copy-paste करना","केवल prompts याद करना"],a:1,e:"AI literacy में output का मूल्यांकन और information verification महत्वपूर्ण skills हैं।"},
+
+{cat:"AI और Digital Literacy",q:"यदि हम हर बार Google Maps पर निर्भर रहें तो कौन-सी skill कम अभ्यास में आ सकती है?",o:["Spatial/navigation memory","Typing","Reading","Drawing"],a:0,e:"Navigation technology उपयोगी है, लेकिन बिना स्वयं route समझे लगातार निर्भर रहने से spatial memory का अभ्यास कम हो सकता है।"},
+{cat:"AI और Digital Literacy",q:"Social media platforms पर दिखाई देने वाला content अक्सर किस आधार पर personalize किया जाता है?",o:["User interactions और interests जैसे signals","केवल device का रंग","केवल battery percentage","केवल screen size"],a:0,e:"Recommendation systems उपयोगकर्ता के व्यवहार और interactions से मिले विभिन्न signals का उपयोग कर सकते हैं।"},
+{cat:"AI और Digital Literacy",q:"Personalized recommendations का एक संभावित प्रभाव क्या हो सकता है?",o:["उपयोगकर्ता को अधिक relevant content मिल सकता है","हर बार बिल्कुल random content मिलेगा","Internet बंद हो जाएगा","सभी users को समान content मिलेगा"],a:0,e:"Personalization का उद्देश्य उपयोगकर्ता के लिए अधिक relevant content recommend करना होता है।"},
+{cat:"AI और Digital Literacy",q:"Technology का responsible use किससे संबंधित है?",o:["केवल ज्यादा apps install करना","technology का उद्देश्यपूर्ण, सुरक्षित और संतुलित उपयोग","केवल latest device खरीदना","हर काम AI से करवाना"],a:1,e:"Responsible digital use में उद्देश्य, privacy, safety और balanced usage पर ध्यान दिया जाता है।"},
+{cat:"AI और Digital Literacy",q:"AI literacy का एक महत्वपूर्ण हिस्सा क्या है?",o:["केवल AI tools के नाम याद करना","AI की capabilities और limitations को समझना","केवल AI-generated images बनाना","केवल prompts copy करना"],a:1,e:"AI literacy में यह समझना शामिल है कि AI क्या कर सकता है और कहाँ उसकी सीमाएँ हैं।"},
+
+{cat:"Responsible AI",q:"AI द्वारा दी गई medical, legal या financial information के साथ क्या सावधानी रखनी चाहिए?",o:["बिना verification के निर्णय लेना","विश्वसनीय स्रोत और विशेषज्ञ सलाह से verify करना","केवल social media comment देखना","AI को अंतिम authority मानना"],a:1,e:"High-stakes decisions में AI output को authoritative final answer नहीं मानना चाहिए।"},
+{cat:"Responsible AI",q:"AI के साथ personal sensitive information share करते समय क्या ध्यान रखना चाहिए?",o:["Privacy और data security","केवल typing speed","केवल internet speed","केवल image quality"],a:0,e:"Personal information साझा करने से पहले privacy implications और service की data practices समझना महत्वपूर्ण है।"},
+{cat:"Responsible AI",q:"AI-generated content को प्रकाशित करने से पहले क्या करना उचित है?",o:["Accuracy और appropriateness की जाँच","केवल AI का नाम हटाना","बिना review publish करना","केवल font बदलना"],a:0,e:"Human review AI-generated content की quality और reliability सुनिश्चित करने में मदद करता है।"},
+{cat:"Responsible AI",q:"AI bias का संबंध किससे हो सकता है?",o:["Training data और system design में मौजूद biases से","केवल computer screen से","केवल keyboard से","केवल internet speed से"],a:0,e:"AI systems के outputs training data और design choices में मौजूद biases से प्रभावित हो सकते हैं।"},
+{cat:"Responsible AI",q:"AI का उपयोग करते समय human judgment क्यों आवश्यक है?",o:["क्योंकि AI हर परिस्थिति को पूर्ण रूप से नहीं समझता और गलतियाँ कर सकता है","क्योंकि AI कभी काम नहीं करता","क्योंकि AI केवल calculator है","क्योंकि AI internet से जुड़ नहीं सकता"],a:0,e:"AI powerful tool है, लेकिन context, values और real-world consequences के आकलन में human judgment महत्वपूर्ण रहता है।"},
+
+{cat:"Practical AI Skills",q:"यदि आपको AI से 10 MCQ बनवाने हैं तो prompt में क्या स्पष्ट करना उपयोगी होगा?",o:["Topic","Number of questions","Difficulty और answer format","उपरोक्त सभी"],a:3,e:"ये सभी details AI को अपेक्षित quiz structure समझने में मदद करती हैं।"},
+{cat:"Practical AI Skills",q:"AI से किसी विषय को बच्चों के लिए सरल भाषा में समझाने के लिए कौन-सा निर्देश उपयोगी है?",o:["“Explain it technically.”","“Explain it in simple language suitable for Class 5 students.”","“Make it complicated.”","“Use difficult terminology only.”"],a:1,e:"Audience और language level स्पष्ट करने से explanation को उपयुक्त बनाया जा सकता है।"},
+{cat:"Practical AI Skills",q:"यदि AI ने आपके प्रश्न का उत्तर गलत समझ लिया है तो सबसे उचित अगला कदम क्या है?",o:["Context और requirement को अधिक स्पष्ट करना","गलत उत्तर को सही मान लेना","केवल “No” लिखना","तुरंत computer बदलना"],a:0,e:"स्पष्ट clarification और additional context से AI response को बेहतर दिशा दी जा सकती है।"},
+{cat:"Practical AI Skills",q:"AI को एक productivity tool की तरह इस्तेमाल करने का सबसे अच्छा तरीका क्या है?",o:["हर छोटा-बड़ा निर्णय AI पर छोड़ देना","AI से repetitive और supportive tasks में सहायता लेना तथा final judgment स्वयं करना","केवल मनोरंजन के लिए उपयोग करना","केवल AI-generated content copy करना"],a:1,e:"AI को assistant की तरह उपयोग करना और final responsibility तथा judgment को बनाए रखना अधिक उचित workflow है।"},
+{cat:"Practical AI Skills",q:"AI के युग में सबसे महत्वपूर्ण skill कौन-सी मानी जा सकती है?",o:["केवल तेज typing","केवल ज्यादा AI tools के नाम याद करना","Critical thinking, problem solving और AI literacy","केवल social media चलाना"],a:2,e:"AI tools तेजी से बदलते हैं, इसलिए critical thinking, problem solving और AI literacy जैसी transferable skills विशेष रूप से महत्वपूर्ण हैं।"}
+];
+
+let activeCat="सभी", searchTerm="";
+let seen = JSON.parse(localStorage.getItem("techAnujSeen")||"[]");
+let answered = JSON.parse(localStorage.getItem("techAnujAnswered")||"[]");
+
+const filters=document.getElementById("filters");
+const questionsEl=document.getElementById("questions");
+const cats=["सभी",...new Set(questions.map(x=>x.cat))];
+
+cats.forEach(c=>{
+  const b=document.createElement("button"); b.className="filter"+(c==="सभी"?" active":""); b.textContent=c;
+  b.onclick=()=>{activeCat=c;document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");render()};
+  filters.appendChild(b);
+});
+
+document.getElementById("search").addEventListener("input",e=>{searchTerm=e.target.value.toLowerCase();render()});
+
+function render(){
+  const list=questions.map((q,i)=>({...q,i})).filter(x=>
+    (activeCat==="सभी"||x.cat===activeCat) &&
+    (x.q.toLowerCase().includes(searchTerm)||x.cat.toLowerCase().includes(searchTerm)||x.o.join(" ").toLowerCase().includes(searchTerm))
+  );
+  document.getElementById("countTitle").textContent=`${list.length} प्रश्न`;
+  if(!list.length){questionsEl.innerHTML='<div class="empty">😕 कोई प्रश्न नहीं मिला। Search या category बदलकर देखें।</div>';return}
+  questionsEl.innerHTML=list.map(item=>card(item)).join("");
+}
+function card(x){
+ return `<article class="question" id="q${x.i}">
+  <div class="qhead"><div class="qnum">प्रश्न ${x.i+1}</div><span class="badge">${x.cat}</span></div>
+  <h3>${escapeHtml(x.q)}</h3>
+  <div class="options">${x.o.map((o,j)=>`<button class="option" onclick="choose(${x.i},${j},this)"><b>${String.fromCharCode(65+j)}.</b> ${escapeHtml(o)}</button>`).join("")}</div>
+  <div class="answer ${seen.includes(x.i)?"show":""}" id="ans${x.i}">
+    <strong>✓ सही उत्तर: ${String.fromCharCode(65+x.a)}. ${escapeHtml(x.o[x.a])}</strong>
+    <div class="explain">💡 ${escapeHtml(x.e)}</div>
+  </div>
+ </article>`;
+}
+function choose(i,j,el){
+  seen=[...new Set([...seen,i])]; localStorage.setItem("techAnujSeen",JSON.stringify(seen));
+  const q=questions[i], parent=el.closest(".question");
+  parent.querySelectorAll(".option").forEach((b,k)=>{b.classList.remove("selected","correct","wrong");if(k===q.a)b.classList.add("correct")});
+  if(j!==q.a)el.classList.add("wrong"); else el.classList.add("selected");
+  document.getElementById("ans"+i).classList.add("show"); updateProgress();
+}
+function updateProgress(){
+ const p=Math.round((seen.length/questions.length)*100);
+ document.getElementById("progressBar").style.width=p+"%";
+ document.getElementById("progressText").textContent=`${seen.length} / ${questions.length} प्रश्न देखे/attempt किए गए`;
+}
+function showAll(){
+ questions.forEach((q,i)=>{if(!seen.includes(i))seen.push(i)});
+ localStorage.setItem("techAnujSeen",JSON.stringify(seen)); render(); updateProgress();
+}
+function resetBank(){
+ if(confirm("क्या आप progress reset करना चाहते हैं?")){seen=[];answered=[];localStorage.removeItem("techAnujSeen");localStorage.removeItem("techAnujAnswered");render();updateProgress()}
+}
+function startQuiz(){
+ const panel=document.getElementById("quizPanel"); panel.classList.add("active");
+ let idx=0,score=0;
+ function draw(){
+   if(idx>=10){panel.innerHTML=`<div class="quiz-result"><h2>🎉 Quiz Complete!</h2><div style="font-size:30px;font-weight:800;color:#16a34a">${score}/10</div><p>आपने 10 random questions attempt किए।</p><button class="btn primary" onclick="startQuiz()">🔄 Try Again</button></div>`;panel.scrollIntoView({behavior:"smooth"});return}
+   const q=questions[Math.floor(Math.random()*questions.length)];
+   panel.innerHTML=`<div class="qhead"><span class="badge">Quick Quiz • ${idx+1}/10</span><button class="btn" onclick="document.getElementById('quizPanel').classList.remove('active')">✕ Close</button></div>
+   <div class="quiz-q">${escapeHtml(q.q)}</div><div class="quiz-options">${q.o.map((o,j)=>`<button class="option" onclick="quizAnswer(${j},${q.a},this)">${String.fromCharCode(65+j)}. ${escapeHtml(o)}</button>`).join("")}</div><div id="quizFeedback"></div>`;
+   window.quizAnswer=(choice,correct,button)=>{
+     panel.querySelectorAll(".option").forEach((b,k)=>{b.disabled=true;if(k===correct)b.classList.add("correct")});
+     const f=document.getElementById("quizFeedback");
+     if(choice===correct){score++;f.innerHTML='<div class="answer show"><strong>✅ सही उत्तर!</strong></div>'}
+     else f.innerHTML='<div class="answer show"><strong>❌ सही उत्तर: '+String.fromCharCode(65+correct)+'</strong></div>';
+     setTimeout(()=>{idx++;draw()},700);
+   };
+ }
+ draw(); panel.scrollIntoView({behavior:"smooth"});
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+render(); updateProgress();
+</script>
+</body>
+</html>
